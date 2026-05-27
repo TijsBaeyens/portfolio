@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio | Tijs Baeyens</title>
+    <style>
+      :root {
+        --bg: #06070d;
+        --panel: rgba(16, 20, 35, 0.8);
+        --panel-strong: #0f1529;
+        --text: #f3f5ff;
+        --muted: #b4bdd9;
+        --line: rgba(180, 190, 220, 0.22);
+        --brand-1: #8d9fff;
+        --brand-2: #52ffd7;
+        --brand-3: #ffa7ed;
+        --warning: #ffd37a;
+        --shadow: 0 24px 50px rgba(0, 0, 0, 0.38);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: Inter, "Segoe UI", system-ui, sans-serif;
+        color: var(--text);
+        background: radial-gradient(circle at 85% -10%, #2f255d 0, transparent 38%),
+          radial-gradient(circle at 8% 92%, #0c5d58 0, transparent 34%), var(--bg);
+        min-height: 100vh;
+        line-height: 1.6;
+      }
+
+      .noise,
+      .scanlines {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      .noise {
+        opacity: 0.11;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.7) 0.45px, transparent 0.45px);
+        background-size: 4px 4px;
+      }
+
+      .scanlines {
+        opacity: 0.09;
+        background-image: linear-gradient(transparent 0, transparent 9px, rgba(255, 255, 255, 0.6) 10px);
+        background-size: 100% 10px;
+      }
+
+      .layout {
+        width: min(1220px, calc(100% - 2.4rem));
+        margin: 1.4rem auto 3rem;
+        display: grid;
+        grid-template-columns: 255px minmax(0, 1fr);
+        gap: 1rem;
+      }
+
+      .left-rail {
+        position: sticky;
+        top: 1rem;
+        height: fit-content;
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background: linear-gradient(180deg, rgba(141, 159, 255, 0.12), rgba(141, 159, 255, 0) 44%), var(--panel);
+        backdrop-filter: blur(8px);
+        padding: 1rem;
+        box-shadow: var(--shadow);
+      }
+
+      .identity {
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 14px;
+        padding: 0.8rem;
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .identity small {
+        color: var(--muted);
+        display: block;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.67rem;
+      }
+
+      .identity strong {
+        display: block;
+        margin-top: 0.2rem;
+        font-size: 1.02rem;
+      }
+
+      .profile-figure {
+        margin-top: 0.75rem;
+        width: 100%;
+        height: auto;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        background: rgba(0, 0, 0, 0.2);
+      }
+
+      .status-dot {
+        margin-top: 0.7rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.82rem;
+        color: var(--muted);
+      }
+
+      .status-dot::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--brand-2);
+        box-shadow: 0 0 12px rgba(82, 255, 215, 0.8);
+        animation: pulse 1.6s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(0.6);
+          opacity: 0.65;
+        }
+      }
+
+      .menu {
+        margin: 1rem 0 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 0.4rem;
+      }
+
+      .menu a {
+        text-decoration: none;
+        color: var(--muted);
+        border: 1px solid transparent;
+        border-radius: 11px;
+        padding: 0.52rem 0.65rem;
+        display: block;
+        font-size: 0.9rem;
+      }
+
+      .menu a:hover,
+      .menu a:focus-visible {
+        color: var(--text);
+        border-color: rgba(255, 255, 255, 0.22);
+        background: rgba(82, 255, 215, 0.08);
+        outline: none;
+      }
+
+      .stack {
+        margin-top: 1rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+      }
+
+      .stack span {
+        font-size: 0.74rem;
+        border: 1px dashed rgba(255, 255, 255, 0.2);
+        color: var(--muted);
+        border-radius: 999px;
+        padding: 0.2rem 0.55rem;
+      }
+
+      .content {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .window {
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        overflow: clip;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(8px);
+      }
+
+      .window-top {
+        padding: 0.55rem 0.8rem;
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.03);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .lights {
+        display: flex;
+        gap: 0.35rem;
+      }
+
+      .lights span {
+        width: 9px;
+        height: 9px;
+        border-radius: 99px;
+        display: inline-block;
+      }
+
+      .lights span:nth-child(1) {
+        background: #ff6f7f;
+      }
+
+      .lights span:nth-child(2) {
+        background: #ffd37a;
+      }
+
+      .lights span:nth-child(3) {
+        background: #54f2d6;
+      }
+
+      .window-top code {
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .hero {
+        padding: clamp(1.3rem, 3.2vw, 2.2rem);
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 1rem;
+      }
+
+      .hero h1 {
+        margin: 0.4rem 0 0.8rem;
+        line-height: 1.15;
+        font-size: clamp(1.7rem, 4vw, 3rem);
+        max-width: 18ch;
+      }
+
+      .kicker {
+        display: inline-block;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.75rem;
+        color: var(--brand-2);
+      }
+
+      .hero p {
+        color: var(--muted);
+        margin: 0;
+        max-width: 62ch;
+      }
+
+      .hero-badges {
+        display: grid;
+        gap: 0.65rem;
+      }
+
+      .hero-visual {
+        margin-top: 0.7rem;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 16px;
+        padding: 0.35rem;
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .hero-visual svg {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .badge {
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        padding: 0.7rem 0.75rem;
+        background: linear-gradient(130deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0));
+      }
+
+      .badge strong {
+        display: block;
+        font-size: 1rem;
+      }
+
+      .badge span {
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .panel {
+        padding: clamp(1.1rem, 2.4vw, 1.8rem);
+      }
+
+      h2 {
+        margin: 0 0 0.65rem;
+        font-size: clamp(1.15rem, 2vw, 1.6rem);
+      }
+
+      .panel p {
+        margin: 0;
+        color: var(--muted);
+        max-width: 70ch;
+      }
+
+      .project-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.8rem;
+      }
+
+      .project {
+        position: relative;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 16px;
+        padding: 0.9rem;
+        background: var(--panel-strong);
+        overflow: hidden;
+      }
+
+      .project::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(150deg, rgba(141, 159, 255, 0.2), transparent 34%);
+        pointer-events: none;
+      }
+
+      .project h3 {
+        margin: 0 0 0.65rem;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+      }
+
+      .project-icon {
+        width: 18px;
+        height: 18px;
+        color: var(--warning);
+        flex: 0 0 auto;
+      }
+
+      .project p {
+        margin: 0.35rem 0;
+        font-size: 0.91rem;
+      }
+
+      .project strong {
+        color: var(--text);
+      }
+
+      .cta-shell {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 0.9rem;
+        align-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 16px;
+        padding: 0.8rem;
+        background: linear-gradient(120deg, rgba(82, 255, 215, 0.12), rgba(255, 167, 237, 0.09));
+      }
+
+      .cta-shell p {
+        margin: 0;
+      }
+
+      .cta-shell a {
+        text-decoration: none;
+        font-weight: 700;
+        color: #07121e;
+        background: linear-gradient(120deg, var(--brand-2), #93ffe6);
+        border-radius: 12px;
+        padding: 0.65rem 0.95rem;
+        white-space: nowrap;
+        border: 1px solid rgba(255, 255, 255, 0.45);
+      }
+
+      .cta-shell a:hover,
+      .cta-shell a:focus-visible {
+        transform: translateY(-1px);
+        filter: brightness(1.03);
+        outline: none;
+      }
+
+      footer {
+        color: #9ba6c9;
+        font-size: 0.83rem;
+        text-align: right;
+      }
+
+      .floating-shape {
+        position: fixed;
+        pointer-events: none;
+        opacity: 0.45;
+        z-index: 0;
+        filter: blur(0.2px);
+      }
+
+      .shape-a {
+        right: 1.1rem;
+        top: 5.5rem;
+        width: 120px;
+        animation: driftA 8s ease-in-out infinite;
+      }
+
+      .shape-b {
+        left: 1rem;
+        bottom: 2rem;
+        width: 140px;
+        animation: driftB 10s ease-in-out infinite;
+      }
+
+      @keyframes driftA {
+        0%,
+        100% {
+          transform: translateY(0px) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-8px) rotate(3deg);
+        }
+      }
+
+      @keyframes driftB {
+        0%,
+        100% {
+          transform: translateY(0px) rotate(0deg);
+        }
+        50% {
+          transform: translateY(10px) rotate(-4deg);
+        }
+      }
+
+      @media (max-width: 1000px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .left-rail {
+          position: static;
+        }
+      }
+
+      @media (max-width: 860px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+
+        .project-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .cta-shell {
+          grid-template-columns: 1fr;
+        }
+
+        footer {
+          text-align: left;
+        }
+
+        .floating-shape {
+          opacity: 0.2;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="noise" aria-hidden="true"></div>
+    <div class="scanlines" aria-hidden="true"></div>
+    <svg class="floating-shape shape-a" viewBox="0 0 120 120" aria-hidden="true">
+      <defs>
+        <linearGradient id="shapeGradA" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#8d9fff" />
+          <stop offset="100%" stop-color="#52ffd7" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M24,18 C44,4 73,8 91,25 C109,42 112,72 97,91 C82,110 52,117 32,103 C11,89 2,61 9,41 C13,30 16,24 24,18 Z"
+        fill="url(#shapeGradA)"
+        fill-opacity="0.55"
+      />
+    </svg>
+    <svg class="floating-shape shape-b" viewBox="0 0 120 120" aria-hidden="true">
+      <defs>
+        <linearGradient id="shapeGradB" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#ffa7ed" />
+          <stop offset="100%" stop-color="#8d9fff" />
+        </linearGradient>
+      </defs>
+      <polygon points="12,66 48,10 103,22 108,85 56,112" fill="url(#shapeGradB)" fill-opacity="0.45" />
+    </svg>
+
+    <main class="layout">
+      <aside class="left-rail" aria-label="Zijmenu">
+        <div class="identity">
+          <small>Portfolio</small>
+          <strong>Tijs Baeyens</strong>
+          <div class="status-dot">Open voor nieuwe uitdaging</div>
+          <svg class="profile-figure" viewBox="0 0 260 110" aria-hidden="true">
+            <defs>
+              <linearGradient id="profileGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#8d9fff" />
+                <stop offset="100%" stop-color="#52ffd7" />
+              </linearGradient>
+            </defs>
+            <rect x="0" y="0" width="260" height="110" fill="#111a33" />
+            <circle cx="45" cy="55" r="22" fill="none" stroke="url(#profileGrad)" stroke-width="3" />
+            <path d="M90 73 C112 42, 138 38, 164 56 C184 68, 208 63, 228 40" fill="none" stroke="#ffa7ed" stroke-width="3" />
+            <rect x="90" y="25" width="38" height="8" rx="4" fill="#8d9fff" />
+            <rect x="90" y="40" width="68" height="8" rx="4" fill="#52ffd7" fill-opacity="0.85" />
+          </svg>
+        </div>
+
+        <ul class="menu">
+          <li><a href="#hero">01 - Intro</a></li>
+          <li><a href="#about">02 - Over mij</a></li>
+          <li><a href="#projects">03 - Projecten</a></li>
+          <li><a href="#contact">04 - Contact</a></li>
+        </ul>
+
+        <div class="stack" aria-label="Technologie stack">
+          <span>React</span>
+          <span>Java</span>
+          <span>C#</span>
+          <span>Python</span>
+        </div>
+      </aside>
+
+      <section class="content">
+        <article class="window" id="hero">
+          <div class="window-top">
+            <div class="lights"><span></span><span></span><span></span></div>
+            <code>creative-runtime/portfolio.onepage</code>
+          </div>
+          <div class="hero">
+            <div>
+              <span class="kicker">Hero</span>
+              <h1>Ik bouw digitale oplossingen waar grote IT-bedrijven op kunnen schalen.</h1>
+              <p>
+                Ik ben een junior developer die creatieve ideeën omzet in robuuste software. Met React, Java, C# en
+                Python lever ik oplossingen die zowel technisch sterk als gebruiksvriendelijk zijn. Voor teams met
+                ambitie combineer ik kwaliteit, snelheid en samenwerking.
+              </p>
+              <div class="hero-visual" aria-hidden="true">
+                <svg viewBox="0 0 550 170">
+                  <defs>
+                    <linearGradient id="pathGrad" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stop-color="#8d9fff" />
+                      <stop offset="50%" stop-color="#52ffd7" />
+                      <stop offset="100%" stop-color="#ffa7ed" />
+                    </linearGradient>
+                  </defs>
+                  <rect x="0" y="0" width="550" height="170" fill="#0b1229" />
+                  <circle cx="82" cy="85" r="45" fill="none" stroke="#8d9fff" stroke-opacity="0.55" stroke-width="2" />
+                  <circle cx="82" cy="85" r="18" fill="#8d9fff" fill-opacity="0.7" />
+                  <path d="M150 102 C220 38, 302 40, 380 96 C425 128, 476 118, 530 72" stroke="url(#pathGrad)" stroke-width="4" fill="none" />
+                  <rect x="210" y="38" width="95" height="16" rx="8" fill="#52ffd7" fill-opacity="0.2" />
+                  <rect x="318" y="38" width="66" height="16" rx="8" fill="#ffa7ed" fill-opacity="0.2" />
+                </svg>
+              </div>
+            </div>
+            <div class="hero-badges">
+              <div class="badge">
+                <strong>Creativiteit</strong>
+                <span>Creatieve invalshoek, formele uitvoering.</span>
+              </div>
+              <div class="badge">
+                <strong>Focus op kwaliteit</strong>
+                <span>Schone code, heldere structuur, schaalbare keuzes.</span>
+              </div>
+              <div class="badge">
+                <strong>Communicatie</strong>
+                <span>Communicatief, leergierig en resultaatgericht.</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="window panel" id="about">
+          <h2>Over mij</h2>
+          <p>
+            Mijn interesse in development begon met een eenvoudige vraag: hoe maak je complexe processen duidelijk en
+            bruikbaar voor mensen? Als junior developer combineer ik een frisse blik met discipline in uitvoering. Ik
+            werk graag op het snijvlak van front-end en back-end, waar React zorgt voor intuitieve interfaces en Java,
+            C# of Python voor een betrouwbare technische kern. Ik leer snel, neem eigenaarschap over mijn taken en
+            denk actief mee over verbetering. In teamverband waardeer ik heldere communicatie, korte feedbacklussen en
+            een gezamenlijke focus op impact. Zo lever ik niet alleen werkende features, maar ook code die op lange
+            termijn onderhoudbaar blijft.
+          </p>
+        </article>
+
+        <article class="window panel" id="projects">
+          <h2>Projecten</h2>
+          <div class="project-grid">
+            <section class="project">
+              <h3>
+                <svg class="project-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="currentColor" d="M12 2l7 4v6c0 5-3.6 9.7-7 10-3.4-.3-7-5-7-10V6l7-4z" />
+                </svg>
+                Druppelkot
+              </h3>
+              <p><strong>Probleem/Doel:</strong> Een website voor een evenement waarbij ik zelf in de organisatie zit.</p>
+              <p><strong>Mijn rol/Oplossing:</strong> Ik heb als developer de website gebouwd met React en Tailwind CSS.</p>
+              <p><strong>Resultaat:</strong> De website is gebouwd en is online te vinden op <a href="https://druppelkot.com">druppelkot.com</a>. Dit heeft geholpen met extra reclame te maken en mensen beter te informeren.</p>
+            </section>
+
+            <section class="project">
+              <h3>
+                <svg class="project-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="currentColor" d="M3 5h18v14H3V5zm2 2v10h14V7H5zm3 3h8v2H8v-2z" />
+                </svg>
+                ToOver
+              </h3>
+              <p><strong>Probleem/Doel:</strong> Een website voor een lokale toneelvereniging.</p>
+              <p><strong>Mijn rol/Oplossing:</strong> Een website gebouwd met React en Tailwind CSS.</p>
+              <p><strong>Resultaat:</strong> De website kun je terugvinden op <a href="https://toover.be">toover.be</a>.</p>
+            </section>
+
+            <section class="project">
+              <h3>
+                <svg class="project-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="currentColor" d="M12 4l8 4v8l-8 4-8-4V8l8-4zm0 2.2L6 9v6l6 2.8 6-2.8V9l-6-2.8z" />
+                </svg>
+                Radiofrequentie simulator
+              </h3>
+              <p><strong>Probleem/Doel:</strong> Een tool voor radiofrequentie simulatie bij drones.</p>
+              <p><strong>Mijn rol/Oplossing:</strong> Ik heb de simulatietool ontwikkeld in Python met focus op nauwkeurige scenario's en overzichtelijke output voor analyse.</p>
+              <p><strong>Resultaat:</strong> De tool heeft geholpen met het simuleren van drone vliegpatronen.</p>
+            </section>
+          </div>
+        </article>
+
+        <article class="window panel" id="contact">
+          <h2>Call to Action</h2>
+          <div class="cta-shell">
+            <p>
+              Zoekt u een junior developer die initiatief neemt, snel leert en met kwaliteit oplevert? Ik ga graag in
+              gesprek over hoe ik uw team kan versterken met technische scherpte en een creatieve blik.
+            </p>
+            <a href="mailto:tijsbaeyens8@gmail.com">Plan een kennismaking</a>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>
